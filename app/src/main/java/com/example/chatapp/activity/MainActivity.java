@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chatapp.activity.ChatActivity;;
+;import com.example.chatapp.ChatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
