@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:background="?attr/colorOnBackground"
+    android:padding="16dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:gravity="center"
+        android:layout_gravity="center"
+        tools:ignore="MissingConstraints">
 
         <EditText
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Логин"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:background="@drawable/rounded_input"
+            android:fontFamily="sans-serif-medium"
+            android:drawableStart="@drawable/ic_person"
+            android:drawablePadding="8dp"/>
 
         <EditText
             android:id="@+id/password"
@@ -21,7 +32,12 @@
             android:layout_height="wrap_content"
             android:hint="Пароль"
             android:inputType="textPassword"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:background="@drawable/rounded_input"
+            android:fontFamily="sans-serif-medium"
+            android:drawableStart="@drawable/ic_lock"
+            android:drawablePadding="8dp"
+            android:layout_marginTop="12dp"/>
 
         <EditText
             android:id="@+id/confirmPassword"
@@ -29,13 +45,22 @@
             android:layout_height="wrap_content"
             android:hint="Подтвердите пароль"
             android:inputType="textPassword"
-            android:padding="12dp"/>
+            android:padding="12dp"
+            android:background="@drawable/rounded_input"
+            android:fontFamily="sans-serif-medium"
+            android:drawableStart="@drawable/ic_lock"
+            android:drawablePadding="8dp"
+            android:layout_marginTop="12dp"/>
 
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Зарегистрироваться" />
+            android:text="Зарегистрироваться"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/rounded_button"/>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

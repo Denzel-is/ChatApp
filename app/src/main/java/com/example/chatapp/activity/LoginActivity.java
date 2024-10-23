@@ -10,8 +10,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chatapp.ChatActivity;
+
 import com.example.chatapp.R;
+import com.example.chatapp.WeatherActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthResult;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Успешный вход
                             FirebaseUser user = mAuth.getCurrentUser();
                             saveLoginState();  // Сохраняем состояние
-                            Intent intent = new Intent(LoginActivity.this, ChatActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, WeatherActivity.class);
                             startActivity(intent);
                             finish();
                         } else {

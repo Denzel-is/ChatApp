@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.activity)
 
     implementation(libs.constraintlayout)
+    implementation(libs.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -52,7 +53,6 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
     implementation("com.google.firebase:firebase-database:20.2.0")
-    implementation("com.google.firebase:firebase-auth:22.0.0")
 
 }
 apply(plugin = "com.google.gms.google-services")

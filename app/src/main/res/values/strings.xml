@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="weather_api_key">f1982d317e4d16010219651fcda9c66f</string>
+    <string name="temperature_format">Температура: %.1f°C</string>
+    <string name="humidity_format">Влажность: %d%%</string>
+
 </resources>
