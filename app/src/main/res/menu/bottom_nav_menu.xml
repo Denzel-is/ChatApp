@@ -1,5 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home1"
@@ -14,7 +15,16 @@
         android:icon="@drawable/ic_weather1"
         android:width="12dp"
         android:height="12dp"
-        android:title="Weather"
+        android:title="Current Weather"
+        android:checkable="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_forecast"
+        android:icon="@drawable/ic_sunny"
+        android:width="12dp"
+        android:height="12dp"
+        android:title="7-Day Forecast"
         android:checkable="true"
         app:showAsAction="ifRoom" />
 

@@ -21,6 +21,13 @@
                 @Query("appid") String apiKey,
                 @Query("units") String units
         );
-
+        @GET("forecast/daily")
+        Call<ForecastResponse> get7DayForecast(
+                @Query("lat") double lat,
+                @Query("lon") double lon,
+                @Query("cnt") int count,
+                @Query("appid") String apiKey,
+                @Query("units") String units
+        );
         // Call<WeatherResponse> getWeatherData(String cityName, String apiKey, String metric);
     }
