@@ -1,29 +1,26 @@
 package com.example.chatapp;
 
-
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.example.chatapp.R;
-import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import java.util.Locale;
 
 public class WeatherActivity extends AppCompatActivity {
 
     private TextView temperatureTextView, humidityTextView, weatherConditionTextView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    // Вставьте свой API-ключ OpenWeatherMap
-    private final String API_KEY = "f1982d317e4d16010219651fcda9c66f";
-    private final String WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=" + API_KEY + "&units=metric";  // Пример запроса
+    private static final String API_KEY = "f1982d317e4d16010219651fcda9c66f";
+    private static final double LAT = 35.0;
+    private static final double LON = 139.0;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,63 +42,37 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void loadWeatherData() {
-        swipeRefreshLayout.setRefreshing(true);  // Включаем индикатор обновления
+        swipeRefreshLayout.setRefreshing(true);
 
-        new Thread(() -> {
-            try {
-                URL url = new URL(WEATHER_URL);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setDoInput(true);
+        WeatherApiManager.getInstance().getWeatherApiService()
+                .getWeatherData(LAT, LON, API_KEY, "metric")
+                .enqueue(new Callback<WeatherResponse>() {
+                    @Override
+                    public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            updateWeatherUI(response.body());
+                        } else {
+                            Log.e("WeatherActivity", "Response unsuccessful");
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
 
-                // Чтение ответа
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
-
-                // Парсинг ответа
-                parseWeatherData(response.toString());
-
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    swipeRefreshLayout.setRefreshing(false);  // Отключаем индикатор обновления
-                    Toast.makeText(WeatherActivity.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                        Log.e("WeatherActivity", "API request failed", t);
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(WeatherActivity.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
+                    }
                 });
-                e.printStackTrace();
-            }
-        }).start();
     }
 
-    private void parseWeatherData(@NonNull String response) {
-        try {
-            JSONObject jsonResponse = new JSONObject(response);
+    private void updateWeatherUI(WeatherResponse weatherData) {
+        double temp = weatherData.getMain().getTemp();
+        String condition = weatherData.getWeather().get(0).getDescription();
+        int humidity = weatherData.getMain().getHumidity();
 
-            // Получаем данные из JSON
-            JSONObject main = jsonResponse.getJSONObject("main");
-            double temperature = main.getDouble("temp");
-            int humidity = main.getInt("humidity");
-
-            JSONObject weather = jsonResponse.getJSONArray("weather").getJSONObject(0);
-            String weatherCondition = weather.getString("description");
-
-            // Обновляем UI
-            runOnUiThread(() -> {
-                temperatureTextView.setText(getString(R.string.temperature_format, temperature));
-                humidityTextView.setText(getString(R.string.humidity_format, humidity));
-                weatherConditionTextView.setText(weatherCondition);
-                swipeRefreshLayout.setRefreshing(false);  // Отключаем индикатор обновления
-            });
-
-        } catch (Exception e) {
-            runOnUiThread(() -> {
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(WeatherActivity.this, "Ошибка обработки данных", Toast.LENGTH_SHORT).show();
-            });
-            e.printStackTrace();
-        }
+        temperatureTextView.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
+        humidityTextView.setText(String.format(Locale.getDefault(), "Humidity: %d%%", humidity));
+        weatherConditionTextView.setText(condition);
     }
 }

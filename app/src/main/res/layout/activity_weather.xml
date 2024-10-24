@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,190 +9,73 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:paddingTop="16dp">
+        android:layout_gravity="center"
+        android:paddingTop="48dp"
+        android:paddingBottom="32dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
-        <!-- Текущая температура и состояние погоды -->
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_sunny"
+            android:contentDescription="Weather Icon"
+            android:layout_marginBottom="16dp"/>
+
+
+        <TextView
+            android:id="@+id/temperatureTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:paddingBottom="24dp">
+            android:text="--°C"
+            android:textSize="72sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:shadowColor="#55000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="6"
+            android:layout_marginBottom="8dp"/>
 
-            <!-- Температура -->
-            <TextView
-                android:id="@+id/temperatureTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="--°C"
-                android:textSize="64sp"
-                android:textColor="@android:color/white"
-                android:fontFamily="sans-serif-light"
-                android:layout_gravity="center_horizontal"
-                android:letterSpacing="0.1"
-                android:textStyle="bold"/>
 
-            <!-- Состояние погоды -->
-            <TextView
-                android:id="@+id/weatherConditionTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mostly Sunny"
-                android:textSize="20sp"
-                android:textColor="@android:color/white"
-                android:fontFamily="sans-serif"
-                android:layout_gravity="center_horizontal"
-                android:letterSpacing="0.05"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/weatherConditionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear Sky"
+            android:textSize="24sp"
+            android:textColor="#BBFFFFFF"
+            android:layout_marginBottom="16dp"/>
 
-        <!-- Прогноз на неделю -->
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="24dp">
-
-            <!-- Карточка для дня прогноза -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                android:background="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:padding="8dp">
-
-                    <!-- Иконка погоды -->
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_sunny"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="4dp"/>
-
-                    <!-- День недели -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mon"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:fontFamily="sans-serif"
-                        android:layout_gravity="center_horizontal"
-                        android:letterSpacing="0.1"
-                        android:textStyle="bold"/>
-
-                    <!-- Температура дня -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="15°C"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:fontFamily="sans-serif"
-                        android:layout_gravity="center_horizontal"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Аналогично добавьте еще карточки для других дней -->
-        </LinearLayout>
-
-        <!-- Дополнительная информация -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/white"
-            android:layout_marginBottom="16dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- Ветер -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/humidityTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="8dp">
+                android:text="Humidity: --%"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginRight="32dp"/>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_wind"
-                    android:layout_marginEnd="8dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wind: 32 kph"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/white"
-                    android:fontFamily="sans-serif"
-                    android:letterSpacing="0.05"/>
-            </LinearLayout>
-
-            <!-- Влажность -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/pressureTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_humidity"
-                    android:layout_marginEnd="8dp"/>
-
-                <TextView
-                    android:id="@+id/humidityTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Humidity: 70%"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/white"
-                    android:fontFamily="sans-serif"
-                    android:letterSpacing="0.05"/>
-            </LinearLayout>
-
-            <!-- Давление -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_pressure"
-                    android:layout_marginEnd="8dp"/>
-
-                <TextView
-                    android:id="@+id/pressureTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pressure: 1040 hPa"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/white"
-                    android:fontFamily="sans-serif"
-                    android:letterSpacing="0.05"/>
-            </LinearLayout>
+                android:text="Pressure: -- hPa"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
