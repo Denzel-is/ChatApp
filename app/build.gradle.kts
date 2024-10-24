@@ -53,6 +53,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
     implementation("com.google.firebase:firebase-database:20.2.0")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.2")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.2")
+    implementation ("com.google.android.material:material:1.9.0")
 
 }
 apply(plugin = "com.google.gms.google-services")

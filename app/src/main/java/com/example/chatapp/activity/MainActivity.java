@@ -1,121 +1,148 @@
 package com.example.chatapp.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.chatapp.R;
-import com.example.chatapp.WeatherActivity;
-import com.example.chatapp.WeatherApiService;
+import com.example.chatapp.WeatherApiManager;
 import com.example.chatapp.WeatherResponse;
+import com.example.chatapp.ui.CurrentWeatherFragment;
+import com.example.chatapp.ui.SettingsFragment;
+import com.example.chatapp.ui.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String API_KEY = "f1982d317e4d16010219651fcda9c66f";
-    private static final String CITY_NAME = "Astana";  // Здесь укажи нужный город
+    private static final String CITY_NAME = "Astana";
 
+    private TextView temperatureTextView, weatherConditionTextView, humidityTextView, pressureTextView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);  // Убедись, что у тебя есть соответствующий layout
+        setContentView(R.layout.activity_main);
 
-        // Проверяем, залогинен ли пользователь
-        if (isUserLoggedIn()) {
-            // Если залогинен — делаем запрос к API погоды
-            fetchWeatherData(CITY_NAME, API_KEY);
-        } else {
-            // Если не залогинен — переходим в LoginActivity
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();  // Завершаем MainActivity
+
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+
+        // Проверяем авторизацию пользователя
+        if (!isUserLoggedIn()) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        // Инициализируем UI-компоненты
+        temperatureTextView = findViewById(R.id.temperatureTextView);
+        weatherConditionTextView = findViewById(R.id.weatherConditionTextView);
+        humidityTextView = findViewById(R.id.humidityTextView);
+        pressureTextView = findViewById(R.id.pressureTextView);
+
+        // Обновляем погоду при запуске
+        fetchWeatherData(CITY_NAME, API_KEY);
+
+
+        swipeRefreshLayout.setOnRefreshListener(() -> fetchWeatherData(CITY_NAME, API_KEY));
+
+        // Инициализация BottomNavigationView
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        // Загружаем основной фрагмент по умолчанию
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.nav_host_fragment, new HomeFragment())
+                    .commit();
+
         }
     }
 
-    // Проверяем авторизацию с помощью SharedPreferences
+
     private boolean isUserLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("ChatAppPrefs", MODE_PRIVATE);
         return prefs.getBoolean("isLoggedIn", false);
     }
 
-    // Выполняем запрос к OpenWeather API
+
     private void fetchWeatherData(String cityName, String apiKey) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openweathermap.org/data/2.5/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        WeatherApiService weatherService = retrofit.create(WeatherApiService.class);
-
-        Call<WeatherResponse> call = weatherService.getWeatherData(cityName, apiKey, "metric");
-
-        call.enqueue(new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                if (response.isSuccessful()) {
-                    WeatherResponse weatherData = response.body();
-
-                    if (weatherData != null) {
-                        // Извлекаем данные из ответа
-                        double temperature = weatherData.getMain().getTemp();
-                        String weatherCondition = weatherData.getWeather().get(0).getDescription();
-                        int humidity = weatherData.getMain().getHumidity();
-                        int pressure = weatherData.getMain().getPressure();
-                        double windSpeed = weatherData.getWind().getSpeed();
-
-                        // Сохраняем данные погоды для дальнейшего использования
-                        saveWeatherDataToPrefs(temperature, weatherCondition, humidity, pressure, windSpeed);
-
-                        // Обновляем UI
-                        updateWeatherUI(temperature, weatherCondition, humidity, pressure, windSpeed);
-
-                        // Переходим на страницу с погодой
-                        Intent intent = new Intent(MainActivity.this, WeatherActivity.class);
-                        startActivity(intent);
-                        finish();
+        WeatherApiManager.getInstance().getWeatherApiService()
+                .getWeatherDataByCity(cityName, apiKey, "metric")
+                .enqueue(new Callback<WeatherResponse>() {
+                    @Override
+                    public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            updateWeatherUI(response.body());
+                        } else {
+                            Log.e("MainActivity", "Response unsuccessful");
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
                     }
-                } else {
-                    Log.e("MainActivity", "Response not successful");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                Log.e("MainActivity", "Error fetching weather data", t);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                        Log.e("MainActivity", "API request failed", t);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
     }
 
-    // Обновляем UI данными погоды
-    private void updateWeatherUI(double temperature, String condition, int humidity, int pressure, double windSpeed) {
-        TextView temperatureTextView = findViewById(R.id.temperatureTextView);
-        TextView weatherConditionTextView = findViewById(R.id.weatherConditionTextView);
-        TextView humidityTextView = findViewById(R.id.humidityTextView);
-        TextView pressureTextView = findViewById(R.id.pressureTextView);
 
-        // Обновляем текстовые поля с данными погоды
-        temperatureTextView.setText(String.format(Locale.getDefault(), "%.1f°C", temperature));
+    private void updateWeatherUI(WeatherResponse weatherData) {
+        double temp = weatherData.getMain().getTemp();
+        String condition = weatherData.getWeather().get(0).getDescription();
+        int humidity = weatherData.getMain().getHumidity();
+        int pressure = weatherData.getMain().getPressure();
+
+        temperatureTextView.setText(String.format(Locale.getDefault(), "%.1f°C", temp));
         weatherConditionTextView.setText(condition);
         humidityTextView.setText(String.format(Locale.getDefault(), "Humidity: %d%%", humidity));
         pressureTextView.setText(String.format(Locale.getDefault(), "Pressure: %d hPa", pressure));
     }
 
-    // Сохраняем данные погоды в SharedPreferences
-    private void saveWeatherDataToPrefs(double temperature, String condition, int humidity, int pressure, double windSpeed) {
-        SharedPreferences prefs = getSharedPreferences("WeatherPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putFloat("temperature", (float) temperature);
-        editor.putString("condition", condition);
-        editor.putInt("humidity", humidity);
-        editor.putInt("pressure", pressure);
-        editor.putFloat("windSpeed", (float) windSpeed);
-        editor.apply();
-    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                selectedFragment = new HomeFragment();
+            } else if (itemId == R.id.nav_weather) {
+                selectedFragment = new CurrentWeatherFragment();
+            } else if (itemId == R.id.nav_settings) {
+                selectedFragment = new SettingsFragment();
+            }else {
+                Log.e("MainActivity", "Неизвестный элемент меню с id: " + itemId);
+                return false;
+            }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.nav_host_fragment, selectedFragment)
+                        .commit();
+                return true;
+            } else {
+                Log.e("MainActivity", "Ошибка инициализации фрагмента");
+                return false;
+            }
+        }
+    };
 }

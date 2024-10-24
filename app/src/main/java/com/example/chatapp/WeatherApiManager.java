@@ -1,9 +1,4 @@
 package com.example.chatapp;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,4 +28,3 @@ public class WeatherApiManager {
         return weatherApiService;
     }
 }
-

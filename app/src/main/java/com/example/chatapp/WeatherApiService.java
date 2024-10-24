@@ -1,15 +1,26 @@
-package com.example.chatapp;
+    package com.example.chatapp;
 
-import com.example.chatapp.WeatherResponse;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+    import com.example.chatapp.WeatherResponse;
+    import retrofit2.Call;
+    import retrofit2.http.GET;
+    import retrofit2.http.Query;
 
-public interface WeatherApiService {
-    @GET("weather")
-    Call<WeatherResponse> getWeatherData(
-            @Query("q") String city,
-            @Query("appid") String apiKey,
-            @Query("units") String units
-    );
-}
+    public interface WeatherApiService {
+        @GET("weather")
+        Call<WeatherResponse> getWeatherDataByCity(
+                @Query("q") String cityName,
+                @Query("appid") String apiKey,
+                @Query("units") String units
+        );
+
+        // Существующий метод для получения данных по координатам
+        @GET("weather")
+        Call<WeatherResponse> getWeatherData(
+                @Query("lat") double lat,
+                @Query("lon") double lon,
+                @Query("appid") String apiKey,
+                @Query("units") String units
+        );
+
+        // Call<WeatherResponse> getWeatherData(String cityName, String apiKey, String metric);
+    }
