@@ -11,8 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+<<<<<<< HEAD
 
 import com.example.chatapp.ForecastFragment;
+=======
+>>>>>>> origin/master
 import com.example.chatapp.R;
 import com.example.chatapp.WeatherApiManager;
 import com.example.chatapp.WeatherResponse;
@@ -131,11 +134,15 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new CurrentWeatherFragment();
             } else if (itemId == R.id.nav_settings) {
                 selectedFragment = new SettingsFragment();
+<<<<<<< HEAD
             }
             else if (itemId == R.id.nav_forecast) {
                 selectedFragment = new ForecastFragment();
             }
             else {
+=======
+            }else {
+>>>>>>> origin/master
                 Log.e("MainActivity", "Неизвестный элемент меню с id: " + itemId);
                 return false;
             }
